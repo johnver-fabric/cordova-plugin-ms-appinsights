@@ -38,10 +38,6 @@
         <access origin="https://dc.services.visualstudio.com/v2/track" />
     </config-file>
 
-    <config-file target="../../config.xml" parent="/*">
-        <preference name="instrumentation_key" value="$INSTRUMENTATION_KEY" />
-    </config-file>
-
     <platform name="android">
     </platform>
 

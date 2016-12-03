@@ -7,7 +7,7 @@
 
 module.exports = function (ctx) {
 
-    var ConfigParser = ctx.requireCordovaModule('../configparser/ConfigParser');
+    var ConfigParser = ctx.requireCordovaModule('cordova-common').ConfigParser;
     var path = ctx.requireCordovaModule('path');
     var shell = ctx.requireCordovaModule('shelljs');
 

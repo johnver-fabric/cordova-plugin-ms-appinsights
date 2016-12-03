@@ -27,7 +27,7 @@
         <clobbers target="window.appInsights.config"/>
     </js-module>
 
-    <js-module name="AppInsightsLibrary" src="www/AppInsights.lib.js">
+    <js-module name="AppInsightsLibrary" src="www/ai.0.js">
         <runs />
     </js-module>
 

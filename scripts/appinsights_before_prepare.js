@@ -6,9 +6,14 @@
 /*jshint node: true*/
 
 module.exports = function (ctx) {
+  const ConfigParser = ctx.requireCordovaModule('cordova-common').ConfigParser;
+
   const path = ctx.requireCordovaModule('path');
   const shell = ctx.requireCordovaModule('shelljs');
   const config = ctx.requireCordovaModule(path.resolve(ctx.opts.projectRoot, 'www', 'extensions.js'));
+
+  const projectConfigXml = new ConfigParser(path.join(ctx.opts.projectRoot, 'config.xml'));
+  const pluginElement = projectConfigXml.getPlugin(ctx.opts.plugin.id);
 
   console.log(`
     **********************************
@@ -18,20 +23,9 @@ module.exports = function (ctx) {
   `);
 
   //change this key to app's AppInsights key
-  let instrumentation_key = '';
-  switch (config.servetype) {
-    case 'ppe':
-      instrumentation_key = config.ppe_key;
-      break;
-    case 'prod':
-      instrumentation_key = config.prod_key;
-      break;
-    default:
-      instrumentation_key = '';
-  }
+  const instrumentation_key = pluginElement.variables[config.servetype.toUpperCase()];
 
   let pluginConfigFile = path.resolve(ctx.opts.plugin.dir, 'www', 'AppInsights.js');
-
   if (instrumentation_key) {
     let pluginConfigFiles = [];
     pluginConfigFiles.push(pluginConfigFile);

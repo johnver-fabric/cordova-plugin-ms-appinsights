@@ -6,31 +6,50 @@
 /*jshint node: true*/
 
 module.exports = function (ctx) {
+  const path = ctx.requireCordovaModule('path');
+  const shell = ctx.requireCordovaModule('shelljs');
+  const config = ctx.requireCordovaModule(path.resolve(ctx.opts.projectRoot, 'www', 'extensions.js'));
 
-    var ConfigParser = ctx.requireCordovaModule('cordova-common').ConfigParser;
-    var path = ctx.requireCordovaModule('path');
-    var shell = ctx.requireCordovaModule('shelljs');
+  console.log(`
+    **********************************
+    * Running AppInsight Hook!
+    * Environment: ${config.servetype}
+    **********************************
+  `);
 
-    var projectConfigXml = new ConfigParser(path.join(ctx.opts.projectRoot, 'config.xml'));
-    var instrKey = projectConfigXml.getGlobalPreference('instrumentation_key');
+  //change this key to app's AppInsights key
+  let instrumentation_key = '';
+  switch (config.servetype) {
+    case 'ppe':
+      instrumentation_key = config.ppe_key;
+      break;
+    case 'prod':
+      instrumentation_key = config.prod_key;
+      break;
+    default:
+      instrumentation_key = '';
+  }
 
-    if (instrKey) {
-        let pluginConfigFiles = [];
-        for (let platform of ctx.opts.platforms) {
-            let configFile = path.join(ctx.opts.projectRoot, `platforms`, platform, 'platform_www', 'plugins', ctx.opts.plugin.id, 'www', 'AppInsights.js');
-            pluginConfigFiles.push(configFile);
-        }
+  let pluginConfigFile = path.resolve(ctx.opts.plugin.dir, 'www', 'AppInsights.js');
 
-        // replace instrumentation key stub with provided value
-        for (let i = 0; i < pluginConfigFiles.length; i++) {
-            console.log(`Replacing 'instrumentationKey' parameter in ${pluginConfigFiles[i]} to ${instrKey}`);
-
-            shell.sed('-i',
-                /instrumentationKey:\s"(.*?)"/g,
-                'instrumentationKey: "' + instrKey + '"',
-                pluginConfigFiles[i]);
-        }
-    } else {
-        throw new Error('instrumentation_key parameter is not defined in config.xml');
+  if (instrumentation_key) {
+    let pluginConfigFiles = [];
+    pluginConfigFiles.push(pluginConfigFile);
+    for (let platform of ctx.opts.platforms) {
+      let configFile = path.join(ctx.opts.projectRoot, `platforms`, platform, 'platform_www', 'plugins', ctx.opts.plugin.id, 'www', 'AppInsights.js');
+      pluginConfigFiles.push(configFile);
     }
+
+    // replace instrumentation key stub with provided value
+    for (let i = 0; i < pluginConfigFiles.length; i++) {
+      console.log(`Replacing 'instrumentationKey' parameter in ${pluginConfigFiles[i]} to ${instrumentation_key}`);
+
+      shell.sed('-i',
+        /instrumentationKey:\s"(.*?)"/g,
+        'instrumentationKey: "' + instrumentation_key + '"',
+        pluginConfigFiles[i]);
+    }
+  } else {
+    throw new Error('instrumentation_key parameter is not defined');
+  }
 };

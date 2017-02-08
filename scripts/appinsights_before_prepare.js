@@ -8,7 +8,7 @@
 module.exports = function (ctx) {
   const path = ctx.requireCordovaModule('path');
   const shell = ctx.requireCordovaModule('shelljs');
-  const config = require(path.resolve(ctx.opts.projectRoot, 'www', 'extensions.js'));
+  const config = ctx.requireCordovaModule(path.resolve(ctx.opts.projectRoot, 'www', 'extensions.js'));
 
   console.log(`
     **********************************

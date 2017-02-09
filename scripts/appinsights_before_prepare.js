@@ -43,7 +43,5 @@ module.exports = function (ctx) {
         'instrumentationKey: "' + instrumentation_key + '"',
         pluginConfigFiles[i]);
     }
-  } else {
-    throw new Error('instrumentation_key parameter is not defined');
   }
 };

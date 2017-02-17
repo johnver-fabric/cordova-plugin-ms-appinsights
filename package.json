@@ -9,7 +9,7 @@
       "ios",
       "windows"
     ]
-  },
+  }, 
   "repository": {
     "type": "git",
     "url": "git+https://github.com/MSOpenTech/cordova-plugin-appinsights.git"
